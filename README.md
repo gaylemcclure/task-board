@@ -1,7 +1,7 @@
 # Task Board
 
 > A one page website where users can add tasks to a kanban board for task management
-> Live demo [_here_](https://gaylemcclure.github.io/personal-blog/).
+> Live demo [_here_](https://gaylemcclure.github.io/task-board/).
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -15,8 +15,7 @@
 
 
 ## General Information
-My Personal Blog is a website to quickly jot down your thoughts or learnings while at your desk. All entries made can be viewed on the second page, calling the data from local storage. 
-There is a light/dark mode available to select from by toggling the sun button. 
+This task board can be used to create and keep track of tasks and their progress. With the data being saved in local storage, you can add tasks, refresh/close the page and when you come back your tasks will be in the same place. 
 
 
 
@@ -24,14 +23,22 @@ There is a light/dark mode available to select from by toggling the sun button.
 - HTML
 - CSS
 - Javascript
+- jQuery
+- jQuery UI
+- Bootstrap
 
 
 ## Features
 List the ready features here:
-- Form page has inputs for user, title and content. Content is an expandable text area. 
-- Submit button performs validation on the click
-- If one or multiple field/s are empty, text will appear to tell you to enter data in the empty field. 
-- Once validated, the form will retrieve any saved data from local storage, and add this new data to it. 
+- Add Task modal popup using Bootstrap
+- Modal fields include title, date, description and button
+- Date field uses a jQuery UI datepicker 
+- Clicking Add Task will;
+   - add a timestamp id to the task
+   - add a status to place it in the To Do column
+   - create a card to show on the ui
+   - save the task to local storage array
+   - compare the due date with todays date and add appropiate class/styling
 - You will then be directed to the blog page to view all saved entries
 - All entries show the title as entered in the input, content, and username. 
 - A footer is at the bottom of the blog page, with links to portfolio, this blog and my email
