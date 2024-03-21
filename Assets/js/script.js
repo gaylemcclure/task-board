@@ -15,7 +15,8 @@ function generateTaskId() {
 function createTaskCard(task) {
 
     $("#todo-cards").append(`
-    <div class="card bg-primary">
+    <li class="ui-state-default">
+    <div class="card id=${task.id} key=${task.id} ${task.dateStatus}">
       <div class="card-header">${task.title}</div>
       <div class="card-body">
         <h5 class="card-title">${task.description}</h5>
@@ -23,6 +24,7 @@ function createTaskCard(task) {
         <button id="delete-btn" class="btn btn-primary">Delete</button>
       </div>
     </div>
+    </li>
 
     `)
 
@@ -30,9 +32,14 @@ function createTaskCard(task) {
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
+  //when refreshed, create a card for each item in local storage
   taskList.map(task => {
     createTaskCard(task)
   })
+  //Make the cards moveable between columns
+  $( "#todo-cards, #in-progress-cards, #done-cards" ).sortable({
+    connectWith: ".connectedSortable"
+  }).disableSelection();
 }
 
 // Todo: create a function to handle adding a new task
@@ -41,7 +48,8 @@ function handleAddTask(event){
   const date = $('#datepicker').val();
   const descr = $('#description').val();
   const taskId = generateTaskId();
-  const status = ""
+  const dateStatus = handleStatus(date);
+  const status = "todo"
 
   //Create task object to save to local storage
   let taskObj = {
@@ -49,6 +57,7 @@ function handleAddTask(event){
     title: title,
     date:date,
     description: descr,
+    dateStatus: dateStatus,
     status: status
   }
 
@@ -60,7 +69,7 @@ function handleAddTask(event){
     localStorage.setItem("tasks", JSON.stringify(taskList))
   }
 
-  taskList !== null ? renderTaskList() : null;
+  createTaskCard(taskObj)
   //Reset the form and hide modal
   document.querySelector("#modal-form").reset();
  $('#formModal').modal('hide')
@@ -83,3 +92,19 @@ $(document).ready(function () {
   $("#datepicker").datepicker();
   $('#delete-btn').on("click", (event) => handleDeleteTask(event))
 });
+
+
+function handleStatus(date) {
+  const now = dayjs();
+  const before = dayjs(date).isBefore(now, 'day')
+  const today = dayjs(date).isSame(now, 'day')
+  const future = dayjs(date).isAfter(now);
+  
+  if (before) {
+    return "before"
+  } else if (today) {
+    return "today"
+  } else if (future) {
+    return "future"
+  }
+}
