@@ -74,13 +74,15 @@ function handleAddTask(event) {
   }
   //Create the card for the new task, reset the form and close modal
   createTaskCard(taskObj);
-  document.querySelector("#modal-form").reset();
+  //resets the add task fields, and ensures you can delete task without refreshing. 
+  window.location.reload();
   $("#formModal").modal("hide");
 }
 
 // Function to handle deleting a task
 function handleDeleteTask(event) {
   let savedTasks = getTasks();
+  //removes the task with the selected id from the array, saves back to local storage and removed that card
   savedTasks = savedTasks.filter((task) => task.id !== event.target.id);
   localStorage.setItem("tasks", JSON.stringify(savedTasks));
   $(`li#${event.target.id}`).remove();
@@ -90,6 +92,7 @@ function handleDeleteTask(event) {
 function handleDrop(event, ui) {
   const storage = JSON.parse(localStorage.getItem("tasks"));
   const taskIndex = handleFindIndex(storage, ui.item[0].id);
+  //Gets the id of the moved task, updates its status and saves to local storage again
   storage[taskIndex].status = event.currentTarget.id;
   localStorage.setItem("tasks", JSON.stringify(storage));
 }
@@ -112,7 +115,7 @@ function handleStatus(date) {
 
 //Function to find index of task in local storage array
 function handleFindIndex(array, compareId) {
-  const idElement = (element) => element.id.toString() === compareId;
+  const idElement = (element) => element.id === compareId;
   const findTask = array.findIndex(idElement);
 
   return findTask;
