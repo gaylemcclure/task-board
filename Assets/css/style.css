@@ -29,6 +29,10 @@ button.close > span {
   padding: 1rem 3rem;
 }
 
+li.card:hover {
+  cursor: pointer;
+}
+
 #todo-cards, #in-progress-cards, #done-cards {
   width: 100%;
   min-height: 20px;
