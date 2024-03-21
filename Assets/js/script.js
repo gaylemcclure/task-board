@@ -15,19 +15,15 @@ function generateTaskId() {
 function createTaskCard(task) {
 
     $("#todo-cards").append(`
-    <li class="ui-state-default">
-    <div class="card id=${task.id} key=${task.id} ${task.dateStatus}">
+    <li class="ui-state-default ${task.dateStatus} card" id=${task.id} key=${task.id}>
       <div class="card-header">${task.title}</div>
       <div class="card-body">
         <h5 class="card-title">${task.description}</h5>
         <p class="card-text">${task.date}</p>
-        <button id="delete-btn" class="btn btn-primary">Delete</button>
+        <button id="delete-btn" class="btn btn-danger">Delete</button>
       </div>
-    </div>
     </li>
-
     `)
-
 }
 
 // Todo: create a function to render the task list and make cards draggable
@@ -38,35 +34,39 @@ function renderTaskList() {
   })
   //Make the cards moveable between columns
   $( "#todo-cards, #in-progress-cards, #done-cards" ).sortable({
-    connectWith: ".connectedSortable"
+    connectWith: ".connectedSortable",
+    receive: function(event, ui) {}
   }).disableSelection();
 }
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event){
+  let tasks = JSON.parse(localStorage.getItem("tasks"));
   const title = $("#title").val();
   const date = $('#datepicker').val();
+  const formatDate = dayjs(date).format('DD/MM/YYYY')
   const descr = $('#description').val();
   const taskId = generateTaskId();
   const dateStatus = handleStatus(date);
-  const status = "todo"
+  const status = "todo-cards"
 
   //Create task object to save to local storage
   let taskObj = {
     id: taskId,
     title: title,
-    date:date,
+    date:formatDate,
     description: descr,
     dateStatus: dateStatus,
     status: status
   }
 
   //Check if local storage is empty or not and save accordingly
-  if (taskList === null) {
-    localStorage.setItem("tasks", JSON.stringify([taskObj]))
-  } else if (Array.isArray(taskList)) {
-    taskList.push(taskObj)
-    localStorage.setItem("tasks", JSON.stringify(taskList))
+  if (tasks === null) {
+    tasks = localStorage.setItem("tasks", JSON.stringify([taskObj]))
+  } else if (Array.isArray(tasks)) {
+    let taskArr = tasks
+    taskArr.push(taskObj)
+    localStorage.setItem("tasks", JSON.stringify(taskArr))
   }
 
   createTaskCard(taskObj)
@@ -90,8 +90,20 @@ $(document).ready(function () {
   taskList !== null ? renderTaskList() : null;
   $('#add-btn').on("click", (event) => handleAddTask(event))
   $("#datepicker").datepicker();
-  $('#delete-btn').on("click", (event) => handleDeleteTask(event))
-});
+  $('#delete-btn').on("click", (event) => handleDeleteTask(event));
+  $( "#todo-cards, #in-progress-cards, #done-cards" ).on("sortreceive", function(event, ui) {
+    const movedId = ui.item[0].id;
+    const newList = event.currentTarget.id;
+    const storage = JSON.parse(localStorage.getItem("tasks"));
+    
+    const idElement = (element) => element.id.toString() === movedId;
+    const findTask = storage.findIndex(idElement)
+    storage[findTask].status = newList;
+    localStorage.setItem("tasks", JSON.stringify(storage))
+    })
+
+  })
+// });
 
 
 function handleStatus(date) {
